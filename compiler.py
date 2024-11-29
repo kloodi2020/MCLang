@@ -78,10 +78,10 @@ class Compiler:
                     if type(node.args[0]).__name__ == "NumberNode":
                         comp = "{\"text\":\"" + self.visit(node.args[0]) + "\"}"
                     elif type(node.args[0]).__name__ == "VarAccessNode":
-                        comp = "{\"score\": {\"name\": \"" + node.args[0].name.value + "\",\"objective\": \"MClangVars\"}}"
+                        comp = "{\"score\": {\"name\":\"" + node.args[0].name.value + "\",\"objective\":\"MClangVars\"}}"
                     elif type(node.args[0]).__name__ == "BinOpNode":
                         before = self.visit(node.args[0])
-                        comp = "{\"score\": {\"name\": \"a\",\"objective\": \"MClangTemp\"}}"
+                        comp = "{\"score\": {\"name\":\"a\",\"objective\":\"MClangTemp\"}}"
                     return f"{before}\ntellraw @a {comp}"
         else:
             return f"function {self.namespace}:{node.value.name.value}"

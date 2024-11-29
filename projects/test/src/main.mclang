@@ -1,6 +1,7 @@
 func load() {
-    print(x)
+    x = 0
 }
 func tick() {
-
+    x = x + 1
+    print(x)
 }
