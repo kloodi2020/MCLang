@@ -69,7 +69,22 @@ class Compiler:
         return f"{node.token.value}"
     
     def visit_CallNode(self, node):
-        return f"function {self.namespace}:{node.value.name.value}"
+        if len(node.args) > 0:
+            funcName = node.value.name.value
+            if funcName in const.BUILTINFUNC:
+                if funcName == "print":
+                    comp = "{}"
+                    before = ""
+                    if type(node.args[0]).__name__ == "NumberNode":
+                        comp = "{\"text\":\"" + self.visit(node.args[0]) + "\"}"
+                    elif type(node.args[0]).__name__ == "VarAccessNode":
+                        comp = "{\"score\": {\"name\": \"" + node.args[0].name.value + "\",\"objective\": \"MClangVars\"}}"
+                    elif type(node.args[0]).__name__ == "BinOpNode":
+                        before = self.visit(node.args[0])
+                        comp = "{\"score\": {\"name\": \"a\",\"objective\": \"MClangTemp\"}}"
+                    return f"{before}\ntellraw @a {comp}"
+        else:
+            return f"function {self.namespace}:{node.value.name.value}"
     
     def visit_VarAccessNode(self, node):
         return f"{node.name.value} MClangVars"

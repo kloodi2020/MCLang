@@ -1,1 +1,0 @@
-scoreboard players set x MClangVars 1

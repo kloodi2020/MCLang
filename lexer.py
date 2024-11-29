@@ -22,6 +22,8 @@ class Token:
     MUL = "MUL"
     DIV = "DIV"
 
+    COMMA = "COMMA"
+
     LPAREN = "LPAREN"
     RPAREN = "RPAREN"
     LCURLY = "LCURLY"
@@ -101,6 +103,9 @@ class Lexer:
                 self.advance()
             elif self.currentChar == "}":
                 tokens.append(Token([self.pos], Token.RCURLY))
+                self.advance()
+            elif self.currentChar == ",":
+                tokens.append(Token([self.pos], Token.COMMA))
                 self.advance()
             elif self.currentChar == "#":
                 while self.currentChar != "\n":

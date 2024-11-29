@@ -84,10 +84,7 @@ def safeMkDir(path):
 def build(projName):
     projectFolder = moveBack(__file__) + os.sep + "projects" + os.sep + projName
     if os.path.exists(projectFolder):
-        files = [projectFolder + os.sep + "build" + os.sep + file for file in os.listdir(projectFolder + os.sep + "build") if os.path.isfile(os.path.join(projectFolder + os.sep + "build", file))]
-        for file in files:
-            os.remove(file)
-        
+        functionPath = projectFolder + os.sep + "build" + os.sep + "data" + os.sep + projName + os.sep + "functions"
         safeMkDir(projectFolder + os.sep + "build" + os.sep + "data")
 
         safeMkDir(projectFolder + os.sep + "build" + os.sep + "data" + os.sep + "minecraft")
@@ -95,7 +92,11 @@ def build(projName):
         safeMkDir(projectFolder + os.sep + "build" + os.sep + "data" + os.sep + "minecraft" + os.sep + "tags" + os.sep + "functions")
 
         safeMkDir(projectFolder + os.sep + "build" + os.sep + "data" + os.sep + projName)
-        safeMkDir(projectFolder + os.sep + "build" + os.sep + "data" + os.sep + projName + os.sep + "functions")
+        safeMkDir(functionPath)
+
+        files = [functionPath + os.sep + file for file in os.listdir(functionPath) if os.path.isfile(os.path.join(functionPath, file))]
+        for file in files:
+            os.remove(file)
 
         config = configparser.ConfigParser()
         filePath = projectFolder + os.sep + "src" + os.sep + "config.cfg"
@@ -145,7 +146,7 @@ def build(projName):
 
             print(ast.node)
 
-            compiler = Compiler(projectFolder + os.sep + "build" + os.sep + "data" + os.sep + projName + os.sep + "functions", projName)
+            compiler = Compiler(functionPath, projName)
 
             print(compiler.visit(ast.node))
     else:

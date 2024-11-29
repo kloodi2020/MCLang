@@ -1,6 +1,7 @@
 from lexer import Token
 import position
 import error
+import const
 
 class NumberNode:
     def __init__(self, token):
@@ -85,13 +86,14 @@ class VarAssignNode:
         return f"{self.name.value} = {self.value}"
 
 class CallNode:
-    def __init__(self, value):
+    def __init__(self, value, args):
         self.value = value
+        self.args = args
 
         self.posRange = self.value.posRange
     
     def __repr__(self):
-        return f"{self.value}()"
+        return f"{self.value}({self.args})"
 
 class ParseResult:
     def __init__(self):
@@ -276,12 +278,28 @@ class Parser:
 
             if self.currentTok.matches(Token.LPAREN):
                 self.advance()
-                if not self.currentTok.matches(Token.RPAREN):
-                    return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Expected )"))
+                
+                args = []
+                if name.value in const.BUILTINFUNC:
+                    while not self.currentTok.matches(Token.RPAREN):
+                        arg = self.expr()
+                        if arg.error:
+                            return arg
+                        
+                        args.append(arg.node)
+
+                        if not (self.currentTok.matches(Token.COMMA) or self.currentTok.matches(Token.RPAREN)):
+                            return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Expected , or )"))
+                        
+                        if self.currentTok.matches(Token.RPAREN):
+                            break
+                else:
+                    if not self.currentTok.matches(Token.RPAREN):
+                        return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Expected )"))
                 
                 self.advance()
 
-                return result.success(CallNode(VarAccessNode(name)))
+                return result.success(CallNode(VarAccessNode(name), args))
 
             if not self.currentTok.matches(Token.EQ):
                 return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Expected ="))

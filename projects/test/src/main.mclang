@@ -1,15 +1,6 @@
 func load() {
-    x = 1
-    loop()
+    print(x)
 }
 func tick() {
-    # You are forced to have tick as a function.
-}
 
-func loop() {
-    x = x + 1
-    if x == 5 {
-        x = 1
-    }
-    loop()
 }
