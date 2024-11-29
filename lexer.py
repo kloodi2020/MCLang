@@ -16,6 +16,7 @@ class Token:
 
     INT = "INT"
     FLOAT = "FLOAT"
+    STRING = "STRING"
     
     ADD = "ADD"
     SUB = "SUB"
@@ -107,6 +108,8 @@ class Lexer:
             elif self.currentChar == ",":
                 tokens.append(Token([self.pos], Token.COMMA))
                 self.advance()
+            elif self.currentChar in const.QUOTES:
+                tokens.append(self.makeString())
             elif self.currentChar == "#":
                 while self.currentChar != "\n":
                     self.advance()
@@ -186,3 +189,23 @@ class Lexer:
             self.advance()
         
         return Token([startPos, self.pos], tokenType)
+
+    def makeString(self):
+        curStr = ""
+
+        startPos = self.pos.copy()
+
+        self.advance()
+
+        while self.currentChar != None and self.currentChar not in const.QUOTES:
+            if self.currentChar == "\\":
+                self.advance()
+                curStr += self.currentChar
+            else:
+                curStr += self.currentChar
+            
+            self.advance()
+            
+        self.advance()
+
+        return Token([startPos, self.pos], Token.STRING, curStr)

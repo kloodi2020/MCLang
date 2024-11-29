@@ -67,7 +67,10 @@ class Compiler:
 
     def visit_NumberNode(self, node):
         return f"{node.token.value}"
-    
+
+    def visit_StringNode(self, node):
+        return f"{node.token.value}"
+
     def visit_CallNode(self, node):
         if len(node.args) > 0:
             funcName = node.value.name.value
@@ -82,7 +85,14 @@ class Compiler:
                     elif type(node.args[0]).__name__ == "BinOpNode":
                         before = self.visit(node.args[0])
                         comp = "{\"score\": {\"name\":\"a\",\"objective\":\"MClangTemp\"}}"
-                    return f"{before}\ntellraw @a {comp}"
+                    elif type(node.args[0]).__name__ == "StringNode":
+                        comp = "{\"text\":\"" + self.visit(node.args[0]) + "\"}"
+                    
+                    arg2 = "@a"
+                    if len(node.args) > 1:
+                        if type(node.args[1]).__name__ == "StringNode":
+                            arg2 = self.visit(node.args[1])
+                    return f"{before}\ntellraw {arg2} {comp}"
         else:
             return f"function {self.namespace}:{node.value.name.value}"
     

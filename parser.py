@@ -12,6 +12,15 @@ class NumberNode:
     def __repr__(self):
         return f"{self.token.value}"
 
+class StringNode:
+    def __init__(self, token):
+        self.token = token
+
+        self.posRange = self.token.posRange
+    
+    def __repr__(self):
+        return f"\"{self.token.value}\""
+
 class BinOpNode:
     def __init__(self, left, operation, right):
         self.left = left
@@ -144,6 +153,9 @@ class Parser:
         if token.type in (Token.INT, Token.FLOAT):
             self.advance()
             node = NumberNode(token)
+        elif token.matches(Token.STRING):
+            self.advance()
+            node = StringNode(token)
         elif token.matches(Token.SUB):
             self.advance()
             node = UnaryOpNode(self.expr(), token)
@@ -165,7 +177,7 @@ class Parser:
             node = expr.node
 
         if node == None:
-            return result.failure(error.Error(token.posRange, error.Error.INVALID_SYNTAX, "Expected int or float or identifier or ("))
+            return result.failure(error.Error(token.posRange, error.Error.INVALID_SYNTAX, "Expected int or float or string or identifier or ("))
 
         return node
 
@@ -173,11 +185,15 @@ class Parser:
         result = ParseResult()
 
         left = result.register(finder())
-        
+
         while self.currentTok.type in opTokens:
             opToken = self.currentTok
             self.advance()
             right = result.register(finder())
+            if type(right).__name__ == "StringNode":
+                return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Operations with strings are not supported"))
+            if type(left).__name__ == "StringNode":
+                return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Operations with strings are not supported"))
 
             left = BinOpNode(left, opToken, right)
         
@@ -293,6 +309,8 @@ class Parser:
                         
                         if self.currentTok.matches(Token.RPAREN):
                             break
+                        else:
+                            self.advance()
                 else:
                     if not self.currentTok.matches(Token.RPAREN):
                         return result.failure(error.Error(self.currentTok.posRange, error.Error.INVALID_SYNTAX, "Expected )"))

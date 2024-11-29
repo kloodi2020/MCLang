@@ -126,7 +126,7 @@ def build(projName):
             with open(filePath, "r") as fileIO:
                 code = fileIO.read()
             
-            lexer = Lexer(file, code)
+            lexer = Lexer(filePath, code)
             tokens, error = lexer.lex()
 
             if error:

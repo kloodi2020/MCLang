@@ -5,3 +5,5 @@ LETTERS = string.ascii_letters
 
 KEYWORDS = ["func", "if"]
 BUILTINFUNC = ["print"]
+
+QUOTES = "\"\'"
