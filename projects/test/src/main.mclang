@@ -1,6 +1,0 @@
-func load() {
-    print("Okay")
-}
-func tick() {
-
-}

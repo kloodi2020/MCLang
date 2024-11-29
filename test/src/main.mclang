@@ -1,0 +1,10 @@
+func load() {
+    x = 0
+}
+func tick() {
+    x = x + 1
+    if x == 5 {
+        x = x / 2
+    }
+    print(x)
+}

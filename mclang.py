@@ -1,5 +1,6 @@
 import os
 import configparser
+import sys
 
 from lexer import Lexer
 from parser import Parser
@@ -81,8 +82,8 @@ def safeMkDir(path):
     if not os.path.exists(path):
         os.mkdir(path)
 
-def build(projName):
-    projectFolder = moveBack(__file__) + os.sep + "projects" + os.sep + projName
+def build(projectFolder):
+    projName = projectFolder.split(os.sep)[-1]
     if os.path.exists(projectFolder):
         functionPath = projectFolder + os.sep + "build" + os.sep + "data" + os.sep + projName + os.sep + "functions"
         safeMkDir(projectFolder + os.sep + "build" + os.sep + "data")
@@ -152,4 +153,4 @@ def build(projName):
     else:
         print("Project folder does not exist!")
 
-build("test")
+build(sys.argv[1])
